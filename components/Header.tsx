@@ -1,6 +1,12 @@
+"use client"
 import Link from 'next/link'
-import React from 'react'
-import { HeaderLocationIcon, HeaderSearchIcon, Headericon1, Headericon2, Headericon3, Headericon4, Logo } from './public/images/icons'
+import React, { useState } from 'react'
+import { HeaderLocationIcon, HeaderSearchIcon, Headericon1, Headericon2, Headericon3, Headericon4, Logo } from '../assets/images/icon'
+import { useDisclosure } from '@nextui-org/modal'
+import LoginInputs from './LoginInputs'
+import CreateUsersInput from './CreateUsersInput'
+import CustomModal from './CustomModal'
+import { Categories } from '@/service/Categories'
 
 interface IHeaderInfoS {
 	id: number,
@@ -8,12 +14,8 @@ interface IHeaderInfoS {
 	path: string
 }
 
-interface Icategories {
-	id: number, 
-	title: string
-}
-
 const Header = () => {
+	const categories = Categories()
 	const HeaderINfoS: IHeaderInfoS[] = [
 		{
 			id: 1,
@@ -30,36 +32,8 @@ const Header = () => {
 		}
 	]
 
-	const HeaderCategories:Icategories[] = [
-		{
-			id: 1,
-			title: "Aksiyalar" 
-		}, {
-			id: 2,
-			title: "Smartfonlar" 
-		}, {
-			id: 3,
-			title: "Noutbooklar" 
-		}, {
-			id: 4,
-			title: "Kondetsionerlar" 
-		}, {
-			id: 5,
-			title: "Telivizorlar" 
-		}, {
-			id: 6,
-			title: "Muzlatgichlar" 
-		}, {
-			id: 7,
-			title: "Kiryuvish mashinalari" 
-		}, {
-			id: 8,
-			title: "Telivizorlar" 
-		}, {
-			id: 9,
-			title: "Kiryuvish mashinalari" 
-		}
-	]
+	const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+	const [isLogin, setIsLogin] = useState<"login" | "createUser">("login")
 
 	return (
 		<header className='pb-[30px]'>
@@ -85,7 +59,7 @@ const Header = () => {
 			<div className="px-[128px] py-[25px] flex items-center justify-between">
 				<div className="flex items-center gap-[35px]">
 					<Link className='flex items-center text-[#134E9B] text-[36px] font-black leading-[42px]' href={"/"}>
-						<span><Logo/></span>
+						<span><Logo /></span>
 						Ashyo
 					</Link>
 					<div className="flex items-center gap-[10px]">
@@ -95,20 +69,25 @@ const Header = () => {
 							<option value="2">Smartfonlar va Aksasuerlar</option>
 						</select>
 						<label className='rounded-[6px] bg-[#EBEFF3] pl-[26px] flex items-center'>
-							<input className='w-[262px] text-[rgba(0, 0, 0, 20%)] text-[13px] font-normal leading-[15px] bg-transparent outline-none' type="text" placeholder='What are you looking for?' autoComplete='off'/>
-							<button className='bg-[#134E9B] rounded-[6px] py-[14px] px-[20px]'><HeaderSearchIcon/></button>
+							<input className='w-[262px] text-[rgba(0, 0, 0, 20%)] text-[13px] font-normal leading-[15px] bg-transparent outline-none' type="text" placeholder='What are you looking for?' autoComplete='off' />
+							<button className='bg-[#134E9B] rounded-[6px] py-[14px] px-[20px]'><HeaderSearchIcon /></button>
 						</label>
 					</div>
 				</div>
 				<div className="flex items-center space-x-[15px]">
-					<div className="py-[12px] px-[13px] rounded-[6px] bg-[#EBEFF3] cursor-pointer"><Headericon1/></div>
-					<div className="py-[12px] px-[13px] rounded-[6px] bg-[#EBEFF3] cursor-pointer"><Headericon2/></div>
-					<div className="py-[12px] px-[13px] rounded-[6px] bg-[#EBEFF3] cursor-pointer"><Headericon3/></div>
-					<div className="py-[12px] px-[13px] rounded-[6px] bg-[#EBEFF3] cursor-pointer"><Headericon4/></div>
+					<div className="py-[12px] px-[13px] rounded-[6px] bg-[#EBEFF3] cursor-pointer"><Headericon1 /></div>
+					<div className="py-[12px] px-[13px] rounded-[6px] bg-[#EBEFF3] cursor-pointer"><Headericon2 /></div>
+					<div className="py-[12px] px-[13px] rounded-[6px] bg-[#EBEFF3] cursor-pointer"><Headericon3 /></div>
+					<div className="py-[12px] px-[13px] rounded-[6px] bg-[#EBEFF3] cursor-pointer">
+						<button onClick={onOpen}><Headericon4 /></button>
+					</div>
+					<CustomModal isLogin={isLogin} setIsLogin={setIsLogin} isOpen={isOpen} onOpenChange={onOpenChange}>
+						{isLogin == "login" ? <LoginInputs onClose={onClose} /> : <CreateUsersInput setIsLogin={setIsLogin} />}
+					</CustomModal>
 				</div>
 			</div>
 			<section className="flex items-center justify-between px-[128px]">
-				{HeaderCategories.map(item => <span className='text-[#545D6A] text-[16px] font-normal cursor-pointer leding-[21px]' key={item.id}>{item.title}</span>)}
+				{categories.map(item => <span className='text-[#545D6A] text-[16px] font-normal cursor-pointer leding-[21px]' key={item.id}>{item.name}</span>)}
 			</section>
 		</header>
 	)
